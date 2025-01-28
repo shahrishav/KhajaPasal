@@ -1,11 +1,12 @@
 const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 const crypto = require("crypto");
 
-// Create a new user (Customer Registration)
+// Create a new user
 const createUser = async (req, res) => {
-  const { firstName, lastName, email, password, phone } = req.body;
+  const { firstName, lastName, email, password, service, phone } = req.body;
 
   if (!firstName || !lastName || !email || !password || !phone) {
     return res
@@ -29,8 +30,9 @@ const createUser = async (req, res) => {
       email,
       phone,
       password: hashedPassword,
-      role: "customer", // Default role for Khaja Pasal users
-      orders: [], // Initialize with empty orders
+      service: service || null,
+      provider: !!service,
+      coordinates: { type: "Point", coordinates: [0, 0] },
     });
 
     await newUser.save();
@@ -43,7 +45,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// User Login
+// User login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -55,6 +57,7 @@ const loginUser = async (req, res) => {
 
   try {
     const user = await Users.findOne({ email });
+    console.log(user);
     if (!user) {
       return res
         .status(404)
@@ -68,11 +71,9 @@ const loginUser = async (req, res) => {
         .json({ success: false, message: "Incorrect password." });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_TOKEN_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(200).json({
       success: true,
@@ -83,17 +84,21 @@ const loginUser = async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        phone: user.phone,
-        role: user.role,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ success: false, message: "Server error." });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "An error occurred while logging in. Please try again.",
+      });
   }
 };
 
-// Get a Single User by ID or Email
+// Get a single user by ID or email
 const getSingleUser = async (req, res) => {
   try {
     const identifier = req.params.id;
@@ -120,7 +125,7 @@ const getSingleUser = async (req, res) => {
   }
 };
 
-// Reset Password
+// Reset password
 const resetPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -151,16 +156,19 @@ const resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in resetPassword:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error while resetting password.",
-    });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while resetting password.",
+      });
   }
 };
 
-// Update User Profile
+// Update user profile
 const updateUser = async (req, res) => {
-  const { firstName, lastName, phone } = req.body;
+  const { firstName, lastName, email } = req.body;
+  console.log(req.body);
   const userId = req.params.id;
 
   if (!userId) {
@@ -170,7 +178,11 @@ const updateUser = async (req, res) => {
   }
 
   try {
-    const updateData = { firstName, lastName, phone };
+    const updateData = { firstName, lastName, email };
+
+    if (req.file) {
+      updateData.photo = `uploads/${req.file.filename}`;
+    }
 
     const updatedUser = await Users.findByIdAndUpdate(userId, updateData, {
       new: true,
@@ -190,7 +202,8 @@ const updateUser = async (req, res) => {
         id: updatedUser._id,
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
-        phone: updatedUser.phone,
+        email: updatedUser.email,
+        photo: updatedUser.photo,
       },
     });
   } catch (error) {
@@ -201,10 +214,42 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Change password
+const changePassword = async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  if (!email || !currentPassword || !newPassword) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Current password is incorrect." });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully!" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to change password. Please try again." });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
   getSingleUser,
   resetPassword,
   updateUser,
+  changePassword,
 };

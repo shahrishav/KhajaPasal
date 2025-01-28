@@ -1,0 +1,33 @@
+/* FoodCard Component Styles */
+.food-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+.food-image {
+    object-fit: cover;
+    height: 150px;
+    /* Match the width to make it square */
+    margin: auto;
+    /* Center the image */
+}
+
+.food-details {
+    padding: 1rem;
+}
+
+.food-details h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #4e362a;
+}
+
+.food-details p {
+    font-size: 0.875rem;
+    color: #7d5a50;
+    margin: 0.5rem 0;
+}

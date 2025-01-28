@@ -1,0 +1,141 @@
+
+/* FAQ CSS */
+.faq-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, #ffe9e4, #fff7f0);
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+  transition: transform 0.3s ease-in-out;
+}
+
+.faq-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.faq-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.faq-item {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.faq-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.faq-item.active {
+  background: linear-gradient(135deg, #f6be9a, #ffdfb9);
+  border-color: #1abc9c;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.faq-question {
+  padding: 15px 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #34495e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.faq-question:hover {
+  background-color: #f1f1f1;
+  color: #1abc9c;
+}
+
+.faq-toggle-icon {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1abc9c;
+}
+
+.faq-answer {
+  padding: 15px 20px;
+  font-size: 16px;
+  color: #7f8c8d;
+  border-top: 1px solid #ddd;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+/* Footer CSS */
+.footer {
+  background: #f8f9fa;
+  padding: 20px;
+  margin-top: 40px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.logo-section h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+.logo-section p {
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.contact-section h4,
+.social-section h4 {
+  font-size: 18px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.contact-section p,
+.social-section .social-icons a {
+  color: #7f8c8d;
+  font-size: 14px;
+  text-decoration: none;
+  margin-bottom: 5px;
+}
+
+.social-icons a {
+  margin-right: 10px;
+  transition: color 0.3s;
+}
+
+.social-icons a:hover {
+  color: #1abc9c;
+}

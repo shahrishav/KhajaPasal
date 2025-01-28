@@ -2,30 +2,31 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 
 const createProvider = async (req, res) => {
-  const { firstName, lastName, email, phone, password, service } = req.body;
+  const { firstName, lastName, email, phone, password } = req.body;
 
-  if (!firstName || !lastName || !email || !phone || !password || !service) {
+  if (!firstName || !lastName || !email || !phone || !password) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
   }
 
   try {
-    // Check if the user (provider) already exists
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(400)
-        .json({ success: false, message: "Provider already exists" });
+        .json({ success: false, message: "User already exists" });
     }
 
-    // Get the uploaded photo path
-    const photo = req.file?.path; // Assuming a single file is uploaded for the photo
+    // Get the file paths
+    const photo = req.files?.photo?.[0]?.path;
+    const cv = req.files?.cv?.[0]?.path;
 
-    if (!photo) {
+    if (!photo || !cv) {
       return res
         .status(400)
-        .json({ success: false, message: "Photo is required" });
+        .json({ success: false, message: "Photo and CV are required" });
     }
 
     // Hash the password
@@ -40,23 +41,23 @@ const createProvider = async (req, res) => {
       phone,
       password: hashedPassword,
       photo,
-      service, // Service being provided (e.g., type of food or cuisine)
-      provider: true, // Marking this user as a provider
+      cv,
+      provider: true,
     });
 
     await newProvider.save();
 
     res.status(201).json({
       success: true,
-      message: "Food provider registered successfully",
-      provider: {
+      message: "Provider registered successfully",
+      user: {
         id: newProvider._id,
         firstName: newProvider.firstName,
         lastName: newProvider.lastName,
         email: newProvider.email,
         phone: newProvider.phone,
         photo: newProvider.photo,
-        service: newProvider.service,
+        cv: newProvider.cv,
       },
     });
   } catch (error) {

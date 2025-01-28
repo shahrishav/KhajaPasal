@@ -1,0 +1,57 @@
+.home-page {
+    font-family: Arial, sans-serif;
+    background-color: #fcece4;
+}
+
+.hero-section {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    text-align: center;
+    margin: 2rem 0;
+    color: #4e362a;
+}
+
+.food-grid,
+.hotel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 0 2rem;
+}
+
+.footer {
+    background-color: #d9cab3;
+    color: #4e362a;
+    padding: 2rem 1rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.logo-section,
+.contact-section,
+.social-section {
+    flex: 1 1 30%;
+    margin: 0 1rem;
+}
+
+.social-icons a {
+    display: block;
+    margin: 0.5rem 0;
+    color: #4e362a;
+    text-decoration: none;
+}
